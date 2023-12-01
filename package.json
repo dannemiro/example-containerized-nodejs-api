@@ -1,0 +1,11 @@
+{
+  "name": "express-postgresql-healthcheck",
+  "version": "1.0.0",
+  "description": "Express.js application with PostgreSQL health check",
+  "main": "server.js",
+  "scripts": {},
+  "dependencies": {
+    "express": "^4.17.2",
+    "pg": "^8.7.1"
+  }
+}

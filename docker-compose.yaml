@@ -1,0 +1,44 @@
+version: '3.4'
+services:
+
+  db:
+    image: postgres
+    container_name: dans-db
+    restart: unless-stopped
+    env_file: ./.env    
+    ports:
+      - $PG_LOCAL_PORT:$PG_DOCKER_PORT
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+
+  app: 
+    image: dans-app:${STAGE}
+    container_name: dans-app
+    env_file: ./.env 
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      # Build time vars
+      args:
+      - STAGE=${STAGE}       
+    ports:
+      - $APP_LOCAL_PORT:$APP_DOCKER_PORT
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"] 
+      interval: 15s
+      retries: 10
+      start_period: 60s
+      timeout: 2s    
+    # Run time vars 
+    environment:
+      - STAGE=${STAGE}
+      - PG_USER=${PG_USER}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_HOST=${PG_HOST}
+      - PG_PORT=${PG_DOCKER_PORT}
+      - APP_PORT=${APP_DOCKER_PORT}
+    depends_on:
+      - db
+
+
